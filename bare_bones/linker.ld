@@ -1,4 +1,5 @@
-/*i686-elf-gcc -T linker.ld -o useless_os.bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc*/
+/*CYGWIN: i686-elf-gcc -T linker.ld -o useless_os.bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc*/
+/*WSL   : i686-elf-g++ -T linker.ld -o useless_os.bin -ffreestanding -O2 -nostdlib boot.o kernel.o*/
 /* The bootloader will look at this image and start execution at the symbol
    designated as the entry point. */
 ENTRY(_start)
