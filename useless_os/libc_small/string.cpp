@@ -1,11 +1,14 @@
 #include <string.h>
 
-void* memcpy(void* __restrict__ dest, const void* __restrict__ src, size_t n)
+void* memcpy(void* __restrict__ dest_, const void* __restrict__ src_, size_t n)
 {
-    (void)dest;
-    (void)src;
-    (void)n;
-    return nullptr;
+    unsigned char* dst = static_cast<unsigned char*>(dest_);
+    const unsigned char* src = static_cast<const unsigned char*>(src_);
+    for (size_t i = 0; i < n; ++i)
+    {
+        dst[i] = src[i];
+    }
+    return dest_;
 }
 
 void* memmove(void* dest, const void* src, size_t n)
