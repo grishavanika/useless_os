@@ -10,7 +10,8 @@ AS_=i686-elf-as
 OBJS:=\
 	build/arch/i386/vga_text.o \
 	build/arch/i386/boot.o \
-	build/kernel.o
+	build/kernel.o \
+	build/panic.o \
 
 # Objects to handle proper global c-tors/d-tors.
 CRTI_OBJ=build/arch/i386/crti.o
@@ -30,7 +31,8 @@ build/useless_os.bin: $(OBJ_LINK_LIST)
 	$(CXX_) -T arch/i386/linker.ld -o build/arch/i386/useless_os.bin \
 		-ffreestanding -O2 -nostdlib -lgcc \
 		$(OBJ_LINK_LIST) \
-		-lc_small
+		-lc_small \
+		-lssp_small
 	grub-file --is-x86-multiboot build/arch/i386/useless_os.bin
 
 build/useless_os.iso: build/useless_os.bin arch/i386/grub.cfg
@@ -52,6 +54,16 @@ build/kernel.o: kernel.cpp
 	$(CXX_) -c kernel.cpp -o build/kernel.o \
 		-std=c++20 -ffreestanding -O2 \
 		-Iinclude \
+		-Wall -Wextra -fno-exceptions -fno-rtti \
+		-fstack-protector-all
+
+# No SSP (-fstack-protector-all) enabled,
+# since this function is used from SSP handler.
+build/panic.o: panic.cpp
+	mkdir -p build/arch/i386
+	$(CXX_) -c panic.cpp -o build/panic.o \
+		-std=c++20 -ffreestanding -O2 \
+		-Iinclude \
 		-Wall -Wextra -fno-exceptions -fno-rtti
 
 build/arch/i386/vga_text.o: arch/i386/vga_text.cpp
@@ -59,7 +71,8 @@ build/arch/i386/vga_text.o: arch/i386/vga_text.cpp
 	$(CXX_) -c arch/i386/vga_text.cpp -o build/arch/i386/vga_text.o \
 		-std=c++20 -ffreestanding -O2 \
 		-Iinclude \
-		-Wall -Wextra -fno-exceptions -fno-rtti
+		-Wall -Wextra -fno-exceptions -fno-rtti \
+		-fstack-protector-all
 
 build/arch/i386/crtn.o: arch/i386/x86_crtn.s
 	mkdir -p build/arch/i386

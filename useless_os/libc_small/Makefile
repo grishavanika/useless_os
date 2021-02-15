@@ -28,15 +28,21 @@ build/libc_small.a: $(OBJS)
 build/stdio.cpp.o: stdio.cpp
 	mkdir -p build
 	$(CXX_) -c stdio.cpp -o build/stdio.cpp.o \
-	-std=c++20 -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+	-std=c++20 -O2 -Wall -Wextra -fno-exceptions -fno-rtti \
+	-ffreestanding \
+	-fstack-protector-all
 build/stdlib.cpp.o: stdlib.cpp
 	mkdir -p build
 	$(CXX_) -c stdlib.cpp -o build/stdlib.cpp.o \
-	-std=c++20 -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+	-std=c++20 -O2 -Wall -Wextra -fno-exceptions -fno-rtti \
+	-ffreestanding \
+	-fstack-protector-all
 build/string.cpp.o: string.cpp
 	mkdir -p build
 	$(CXX_) -c string.cpp -o build/string.cpp.o \
-	-std=c++20 -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+	-std=c++20 -O2 -Wall -Wextra -fno-exceptions -fno-rtti \
+	-ffreestanding \
+	-fstack-protector-all
 
 .PHONY: clean
 clean:
@@ -49,6 +55,6 @@ install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
 	cp -R --preserve=timestamps include/. $(DESTDIR)$(INCLUDEDIR)/.
 
-install-libs: $(BINARIES)
+install-libs: build/libc_small.a
 	mkdir -p $(DESTDIR)$(LIBDIR)
 	cp build/libc_small.a $(DESTDIR)$(LIBDIR)
